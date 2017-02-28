@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #ren-dcmcnv.sh
+#DICOM to NIFTI converter with rename functions
 #This script converts DICOM files into NIFTI mormat using dcm2nii.
 #Not only converting DICOM images, it renmaes nifti files
 #based on header information.

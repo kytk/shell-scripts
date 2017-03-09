@@ -1,21 +1,26 @@
 #!/bin/bash
 
 #ren-dcmcnv.sh
-#DICOM to NIFTI converter with rename functions
-#This script converts DICOM files into NIFTI mormat using dcm2nii.
-#Not only converting DICOM images, it renmaes nifti files
-#based on header information.
-#All you need to prepare is make directories with subjects ID
-#e.g. If you prepare a directory "subj01", the files will be the following;
-#Volume files: V_subj01.nii
-#fMRI files: F_subj01.nii
-#DTI files: D_subj01.nii
-#Prerequisites: dcm2nii (included in MRIcron) and FSL
+# DICOM to NIFTI converter with rename functions
+# This script converts DICOM files into NIFTI mormat using dcm2nii.
+# Not only converting DICOM images, it renmaes nifti files
+# based on header information.
+#
+# All you need to prepare is make directories with subjects ID
+#  e.g. If you prepare a directory "subj01", the following files
+#       will be the following;
+# Volume files: V_subj01.nii
+# fMRI files: F_subj01.nii
+# DTI files: D_subj01.nii
+#
+# Prerequisites: You need to install dcm2nii (included in MRIcron) 
+# and FSL beforehand and set paths to these.
 
-#This work was funded by ImPACT Program of Council for Science,
-#Technology and Innovation (Cabinet Office, Government of Japan).
+# Acknowledgement: This work was funded by ImPACT Program of Council 
+# for Science, Technology and Innovation (Cabinet Office, Government 
+# of Japan).
 
-#28-Feb-2017 K.Nemoto
+#10-Mar-2017 K.Nemoto
 
 set -Ceu
 
@@ -29,7 +34,7 @@ exec &> >(tee -a "$log")
 echo "Check if the path for dcm2nii is set."
 dcm2nii_path=`which dcm2nii`
 if [ "$dcm2nii_path" = "" ]; then
-    echo "Error: Please set path for dcm2nii"
+    echo "Error: Please set path for dcm2nii!"
     exit 1
 else
     echo "Path for dcm2nii is $dcm2nii_path"
@@ -39,36 +44,32 @@ fi
 echo "Check if the path for FSL is set."
 fsl_path=`which fsl`
 if [ "$fsl_path" = "" ]; then
-    echo "Error: Please set path for FSL"
+    echo "Error: Please set path for FSL!"
     exit 1
 else
     echo "Path for FSL is $fsl_path"
 fi
 
-#Set mother directory
+#Set parent directory
 modir=`pwd`
 
-#Prepare DICOM directory
+#Prepare 'DICOM' directory
 if [ ! -e $modir/DICOM ]; then
     mkdir -p $modir/DICOM
 fi
 
-#Prepare an output directory
+#Prepare 'nifti' directory
 if [ ! -e $modir/nifti ]; then
     mkdir -p $modir/nifti
 fi
 
-#Move directories to DICOM directory
+#Move all directories except for DICOM and nifti to DICOM directory
 ls -F --ignore={DICOM,nifti} | grep / | sed -e 's@/@@' -e 's/ /\n/' | \
 while read line; do mv $line DICOM; done
 
 #cd to DICOM directory
 cd $modir/DICOM
 
-#If you prefer to specify arguments, uncomment the following line
-#and comment out the next line.
-
-#for dir in "$@"
 for dir in `ls -F | grep / | sed 's@/@@'`
 do
 
@@ -83,9 +84,6 @@ do
 	cd $dir
 
 	#Acquire dimension of images
-	#3DT1: dim2>=256, dim3>100, and TE<6
-	#fMRI: dim4>=150
-	#DTI: dim4>=8 and dim4<=100
 	for f in *.nii
 	do
 		dim1=`fslinfo $f | grep ^dim1 | awk '{ print $2 }'`
@@ -99,6 +97,12 @@ do
 
 		echo "Dimensions of $f is $dim1, $dim2, $dim3, and $dim4"
 	
+        #Decide if a nifti file is 3DT1, fMRI, or DTI.
+        #Rules are as follows;
+    	#3DT1: dim2>=256, dim3>100, and TE<6
+    	#fMRI: dim4>=150
+    	#DTI: dim4>=8 and dim4<=100
+
         #3D-T1
 		if [ $dim2 -ge 256 ] && [ $dim3 -gt 100 ] && [ $te -lt 6 ]; then
 			echo "$f seems 3D-T1 file."
@@ -159,33 +163,33 @@ do
 		fi
 	done
 
-#move Volume files
-if [ -e V_${dir}.nii ]; then 
-	mv V_*.nii $modir/nifti
-else
-    echo "No volume files!"
-fi
-
-#move fMRI files
-if [ -e F_${dir}.nii ]; then 
-	mv F_*.nii $modir/nifti
-else
-    echo "No fMRI files!"
-fi
-
-#move DTI files
-if [ -e D_PA_${dir}.nii ] ; then 
-	mv D_PA_*.{nii,bval,bvec} $modir/nifti
-elif [ -e D_AP_${dir}.nii ]; then
-	mv D_AP_*.{nii,bval,bvec} $modir/nifti
-else
-    echo "No DTI files!"
-fi
-
-	cd $modir/DICOM
+    #move Volume files to nifti directory
+    if [ -e V_${dir}.nii ]; then 
+    	mv V_*.nii $modir/nifti
+    else
+        echo "No volume files!"
+    fi
+    
+    #move fMRI files to nifti directory
+    if [ -e F_${dir}.nii ]; then 
+    	mv F_*.nii $modir/nifti
+    else
+        echo "No fMRI files!"
+    fi
+    
+    #move DTI files to nifti directory
+    if [ -e D_PA_${dir}.nii ] ; then 
+    	mv D_PA_*.{nii,bval,bvec} $modir/nifti
+    elif [ -e D_AP_${dir}.nii ]; then
+    	mv D_AP_*.{nii,bval,bvec} $modir/nifti
+    else
+        echo "No DTI files!"
+    fi
+    
+    	cd $modir/DICOM
 done
 
-#Delete remained files
+#Delete remained nifti and bv{al,ec} files
 find $modir/DICOM -name '*.nii' -exec rm {} \;
 find $modir/DICOM -name '*.bval' -exec rm {} \;
 find $modir/DICOM -name '*.bvec' -exec rm {} \;

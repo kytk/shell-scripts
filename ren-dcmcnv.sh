@@ -64,8 +64,8 @@ if [ ! -e $modir/nifti ]; then
 fi
 
 #Move all directories except for DICOM and nifti to DICOM directory
-find . -maxdepth 1 -name DICOM -prune -o -name nifti -o -print | \
-grep / | sed -e 's@./@@' -e 's/ /\n/' | \
+find . -maxdepth 1 \( -name DICOM -o -name nifti \) -prune -o \
+-type d -print | grep / | sed -e 's@./@@' -e 's/ /\n/' | \
 while read line; do mv $line DICOM; done
 
 #ls -F --ignore={DICOM,nifti} | grep / | sed -e 's@/@@' -e 's/ /\n/' | \

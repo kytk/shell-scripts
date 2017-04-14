@@ -20,9 +20,9 @@
 # for Science, Technology and Innovation (Cabinet Office, Government 
 # of Japan).
 
-#10-Mar-2017 K.Nemoto
+#14-Apr-2017 K.Nemoto
 
-set -Ceu
+#set -Ceu
 
 #Generate a log
 cnvdate=`date +%Y%m%d-%H%M%S`
@@ -64,8 +64,12 @@ if [ ! -e $modir/nifti ]; then
 fi
 
 #Move all directories except for DICOM and nifti to DICOM directory
-ls -F --ignore={DICOM,nifti} | grep / | sed -e 's@/@@' -e 's/ /\n/' | \
+find . -maxdepth 1 -name DICOM -prune -o -name nifti -o -print | \
+grep / | sed -e 's@./@@' -e 's/ /\n/' | \
 while read line; do mv $line DICOM; done
+
+#ls -F --ignore={DICOM,nifti} | grep / | sed -e 's@/@@' -e 's/ /\n/' | \
+#while read line; do mv $line DICOM; done
 
 #cd to DICOM directory
 cd $modir/DICOM

@@ -104,7 +104,7 @@ do
         #Decide if a nifti file is 3DT1, fMRI, or DTI.
         #Rules are as follows;
     	#3DT1: dim2>=256, dim3>100, and TE<6
-    	#fMRI: dim4>=150
+    	#fMRI: dim4>=130
     	#DTI: dim4>=8 and dim4<=100
 
         #3D-T1
@@ -119,7 +119,7 @@ do
 			fi
 
         #fMRI
-		elif [ $dim4 -ge 150 ]; then
+		elif [ $dim4 -ge 130 ]; then
 			echo "$f seems fMRI file."
             echo " "
             if [ ! -e F*.nii ]; then

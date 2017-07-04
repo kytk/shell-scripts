@@ -20,7 +20,7 @@
 # for Science, Technology and Innovation (Cabinet Office, Government 
 # of Japan).
 
-#30-Jun-2017 K.Nemoto
+#05-Jul-2017 K.Nemoto
 
 #set -Ceu
 
@@ -130,7 +130,7 @@ do
             fi
 			
         #DTI
-		elif [ $dim4 -gt 7 ] && [ $te -gt 50 ] && [ $te -lt 100 ]; then
+		elif [ $dim4 -gt 7 ] && [ $te -gt 50 ] && [ $te -lt 110 ]; then
 			echo "$f seems DTI file."
             echo " "
             if [[ $pe = "+" ]]; then

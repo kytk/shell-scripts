@@ -20,7 +20,7 @@
 # for Science, Technology and Innovation (Cabinet Office, Government 
 # of Japan).
 
-#14-Apr-2017 K.Nemoto
+#05-Jul-2017 K.Nemoto
 
 #set -Ceu
 
@@ -104,8 +104,8 @@ do
         #Decide if a nifti file is 3DT1, fMRI, or DTI.
         #Rules are as follows;
     	#3DT1: dim2>=256, dim3>100, and TE<6
-    	#fMRI: dim4>=130
-    	#DTI: dim4>=8 and dim4<=100
+    	#fMRI: dim4>=130 and 20<TE<40
+    	#DTI: dim4>=8 and 50<TE<110
 
         #3D-T1
 		if [ $dim2 -ge 256 ] && [ $dim3 -gt 100 ] && [ $te -lt 6 ]; then
@@ -119,7 +119,7 @@ do
 			fi
 
         #fMRI
-		elif [ $dim4 -ge 130 ]; then
+		elif [ $dim4 -ge 130 ] && [ $te -gt 20 ] && [ $te -lt 40 ]; then
 			echo "$f seems fMRI file."
             echo " "
             if [ ! -e F*.nii ]; then
@@ -130,7 +130,7 @@ do
             fi
 			
         #DTI
-		elif [ $dim4 -gt 7 ] && [ $dim4 -lt 100 ]; then
+		elif [ $dim4 -gt 7 ] && [ $te -gt 50 ] && [ $te -lt 110 ]; then
 			echo "$f seems DTI file."
             echo " "
             if [[ $pe = "+" ]]; then

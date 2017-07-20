@@ -103,12 +103,12 @@ do
 	
         #Decide if a nifti file is 3DT1, fMRI, or DTI.
         #Rules are as follows;
-    	#3DT1: dim2>=256, dim3>100, and TE<6
+    	#3DT1: dim2>=240, dim3>100, and TE<6
     	#fMRI: dim4>=130 and 20<TE<40
     	#DTI: dim4>=8 and 50<TE<110
 
         #3D-T1
-		if [ $dim2 -ge 256 ] && [ $dim3 -gt 100 ] && [ $te -lt 6 ]; then
+		if [ $dim2 -ge 240 ] && [ $dim3 -gt 100 ] && [ $te -lt 6 ]; then
 			echo "$f seems 3D-T1 file."
             echo " "
 			if [ ! -e V*.nii ]; then

@@ -105,7 +105,7 @@ do
         #Rules are as follows;
     	#3DT1: dim2>=240, dim3>100, and TE<6
     	#fMRI: dim4>=130 and 20<TE<40
-    	#DTI: dim4>=8 and 50<TE<110
+    	#DTI: dim4>=8 and 50<TE<140
 
         #3D-T1
 		if [ $dim2 -ge 240 ] && [ $dim3 -gt 100 ] && [ $te -lt 6 ]; then
@@ -130,7 +130,7 @@ do
             fi
 			
         #DTI
-		elif [ $dim4 -gt 7 ] && [ $te -gt 50 ] && [ $te -lt 110 ]; then
+		elif [ $dim4 -gt 7 ] && [ $te -gt 50 ] && [ $te -lt 140 ]; then
 			echo "$f seems DTI file."
             echo " "
             if [[ $pe = "+" ]]; then

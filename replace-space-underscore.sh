@@ -13,7 +13,7 @@ while true; do
             do
                 find . -maxdepth $i -name '* *' | \
                 while read line
-                do newline=`echo $line | sed 's/ /_/g'`
+                do newline=$(echo $line | sed 's/ /_/g')
                     echo $newline
                     mv "$line" $newline
                 done
@@ -30,5 +30,6 @@ while true; do
     esac
 done
 
+echo "Replace finished!"
 exit
 

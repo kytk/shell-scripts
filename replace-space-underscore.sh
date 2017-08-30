@@ -3,6 +3,7 @@
 
 while true; do
     echo "This script replaces spaces within file/directory name with underscores."
+    echo "All files/directories under $PWD will be affected."
     echo "Do you want to proceed (yes/no)?"
 
     read answer
@@ -18,6 +19,7 @@ while true; do
                     mv "$line" $newline
                 done
             done
+            echo "Replace finished!"
             break
             ;;
         [Nn]*)
@@ -30,6 +32,5 @@ while true; do
     esac
 done
 
-echo "Replace finished!"
 exit
 

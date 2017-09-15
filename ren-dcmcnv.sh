@@ -20,7 +20,7 @@
 # for Science, Technology and Innovation (Cabinet Office, Government 
 # of Japan).
 
-#05-Jul-2017 K.Nemoto
+#16-Sep-2017 K.Nemoto
 
 #set -Ceu
 
@@ -94,10 +94,18 @@ do
 		dim2=`fslinfo $f | grep ^dim2 | awk '{ print $2 }'`
 		dim3=`fslinfo $f | grep ^dim3 | awk '{ print $2 }'`
 		dim4=`fslinfo $f | grep ^dim4 | awk '{ print $2 }'`
-        descrip=`fslhd $f | grep ^descrip |\
-                 sed -e 's/;/\t/g' -e 's/=/\t/g' -e 's/[A-Za-z]+*//g'`
-        te=`echo $descrip | awk '{ printf("%d\n",$1) }'`
-        pe=`echo $descrip | awk '{ print $3 }'`
+	te=$(fslhd $f | grep ^descrip |\
+		  awk '{ print $2 }' | awk -F';' '{ print $1 }'|\
+		  sed 's/TE=//')
+	echo "TE=$te"
+	pe=$(fslhd $f | grep ^descrip |\
+		  awk '{ print $2 }' | awk -F';' '{ print $3 }'|\
+		  sed 's/phaseDir=//')
+	echo "phaseDir=$pe"
+#        descrip=`fslhd $f | grep ^descrip |\
+#                 sed -e 's/;/\t/g' -e 's/=/\t/g' -e 's/[A-Za-z]+*//g'`
+#        te=`echo $descrip | awk '{ printf("%d\n",$1) }'`
+#        pe=`echo $descrip | awk '{ print $3 }'`
 
 		echo "Dimensions of $f is $dim1, $dim2, $dim3, and $dim4"
 	

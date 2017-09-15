@@ -22,8 +22,6 @@
 
 #16-Sep-2017 K.Nemoto
 
-#set -Ceu
-
 #Generate a log
 cnvdate=`date +%Y%m%d-%H%M%S`
 touch ${cnvdate}_dcmcnv.log
@@ -68,9 +66,6 @@ find . -maxdepth 1 \( -name DICOM -o -name nifti \) -prune -o \
 -type d -print | grep / | sed -e 's@./@@' -e 's/ /\n/' | \
 while read line; do mv $line DICOM; done
 
-#ls -F --ignore={DICOM,nifti} | grep / | sed -e 's@/@@' -e 's/ /\n/' | \
-#while read line; do mv $line DICOM; done
-
 #cd to DICOM directory
 cd $modir/DICOM
 
@@ -94,19 +89,13 @@ do
 		dim2=`fslinfo $f | grep ^dim2 | awk '{ print $2 }'`
 		dim3=`fslinfo $f | grep ^dim3 | awk '{ print $2 }'`
 		dim4=`fslinfo $f | grep ^dim4 | awk '{ print $2 }'`
-	te=$(fslhd $f | grep ^descrip |\
+		te=$(fslhd $f | grep ^descrip |\
 		  awk '{ print $2 }' | awk -F';' '{ print $1 }'|\
 		  sed 's/TE=//')
-	echo "TE=$te"
-	pe=$(fslhd $f | grep ^descrip |\
+		pe=$(fslhd $f | grep ^descrip |\
 		  awk '{ print $2 }' | awk -F';' '{ print $3 }'|\
 		  sed 's/phaseDir=//')
-	echo "phaseDir=$pe"
-#        descrip=`fslhd $f | grep ^descrip |\
-#                 sed -e 's/;/\t/g' -e 's/=/\t/g' -e 's/[A-Za-z]+*//g'`
-#        te=`echo $descrip | awk '{ printf("%d\n",$1) }'`
-#        pe=`echo $descrip | awk '{ print $3 }'`
-
+		echo "TE=${te}; phaseDir=$pe"
 		echo "Dimensions of $f is $dim1, $dim2, $dim3, and $dim4"
 	
         #Decide if a nifti file is 3DT1, fMRI, or DTI.

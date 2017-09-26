@@ -20,19 +20,17 @@
 # for Science, Technology and Innovation (Cabinet Office, Government 
 # of Japan).
 
-#05-Jul-2017 K.Nemoto
-
-#set -Ceu
+#16-Sep-2017 K.Nemoto
 
 #Generate a log
-cnvdate=`date +%Y%m%d-%H%M%S`
+cnvdate=$(date +%Y%m%d-%H%M%S)
 touch ${cnvdate}_dcmcnv.log
 log=${cnvdate}_dcmcnv.log
 exec &> >(tee -a "$log")
 
 #Check dcm2nii path
 echo "Check if the path for dcm2nii is set."
-dcm2nii_path=`which dcm2nii`
+dcm2nii_path=$(which dcm2nii)
 if [ "$dcm2nii_path" = "" ]; then
     echo "Error: Please set path for dcm2nii!"
     exit 1
@@ -42,7 +40,7 @@ fi
 
 #Check FSL path
 echo "Check if the path for FSL is set."
-fsl_path=`which fsl`
+fsl_path=$(which fsl)
 if [ "$fsl_path" = "" ]; then
     echo "Error: Please set path for FSL!"
     exit 1
@@ -51,7 +49,7 @@ else
 fi
 
 #Set parent directory
-modir=`pwd`
+modir=$(pwd)
 
 #Prepare 'DICOM' directory
 if [ ! -e $modir/DICOM ]; then
@@ -68,17 +66,14 @@ find . -maxdepth 1 \( -name DICOM -o -name nifti \) -prune -o \
 -type d -print | grep / | sed -e 's@./@@' -e 's/ /\n/' | \
 while read line; do mv $line DICOM; done
 
-#ls -F --ignore={DICOM,nifti} | grep / | sed -e 's@/@@' -e 's/ /\n/' | \
-#while read line; do mv $line DICOM; done
-
 #cd to DICOM directory
 cd $modir/DICOM
 
-for dir in `ls -F | grep / | sed 's@/@@'`
+for dir in $(ls -F | grep / | sed 's@/@@')
 do
 
 	echo "Begin conversion of $dir"
-	echo "`date +%F_%T`"
+	echo "$(date +%F_%T)"
 
 	#dcm2nii
 	echo "dcm2nii for $dir"
@@ -90,15 +85,17 @@ do
 	#Acquire dimension of images
 	for f in *.nii
 	do
-		dim1=`fslinfo $f | grep ^dim1 | awk '{ print $2 }'`
-		dim2=`fslinfo $f | grep ^dim2 | awk '{ print $2 }'`
-		dim3=`fslinfo $f | grep ^dim3 | awk '{ print $2 }'`
-		dim4=`fslinfo $f | grep ^dim4 | awk '{ print $2 }'`
-        descrip=`fslhd $f | grep ^descrip |\
-                 sed -e 's/;/\t/g' -e 's/=/\t/g' -e 's/[A-Za-z]+*//g'`
-        te=`echo $descrip | awk '{ printf("%d\n",$1) }'`
-        pe=`echo $descrip | awk '{ print $3 }'`
-
+		dim1=$(fslinfo $f | grep ^dim1 | awk '{ print $2 }')
+		dim2=$(fslinfo $f | grep ^dim2 | awk '{ print $2 }')
+		dim3=$(fslinfo $f | grep ^dim3 | awk '{ print $2 }')
+		dim4=$(fslinfo $f | grep ^dim4 | awk '{ print $2 }')
+		te=$(fslhd $f | grep ^descrip |\
+		  awk '{ print $2 }' | awk -F';' '{ print $1 }'|\
+		  sed 's/TE=//')
+		pe=$(fslhd $f | grep ^descrip |\
+		  awk '{ print $2 }' | awk -F';' '{ print $3 }'|\
+		  sed 's/phaseDir=//')
+		echo "TE=${te}; phaseDir=$pe"
 		echo "Dimensions of $f is $dim1, $dim2, $dim3, and $dim4"
 	
         #Decide if a nifti file is 3DT1, fMRI, or DTI.
@@ -137,14 +134,14 @@ do
                  echo "Phase encoding of the DTI file is AP."
                  echo " "
                  cp $f D_AP_${dir}.nii 
-                 dti_ap=`imglob $f`
+                 dti_ap=$(imglob $f)
 			     #echo "dti_ap = ${dti_ap}"
                  cp ${dti_ap}.bval D_AP_${dir}.bval
                  cp ${dti_ap}.bvec D_AP_${dir}.bvec
             else
                  echo "Phase encoding of the DTI file is PA."
                  cp $f D_PA_${dir}.nii 
-                 dti_pa=`imglob $f`
+                 dti_pa=$(imglob $f)
 			     #echo "dti_pa = $dti_pa"
                  cp ${dti_pa}.bval D_PA_${dir}.bval
                  cp ${dti_pa}.bvec D_PA_${dir}.bvec

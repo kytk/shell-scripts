@@ -20,7 +20,7 @@
 # for Science, Technology and Innovation (Cabinet Office, Government 
 # of Japan).
 
-#16-Sep-2017 K.Nemoto
+#07-Oct-2017 K.Nemoto
 
 #Generate a log
 cnvdate=$(date +%Y%m%d-%H%M%S)
@@ -91,7 +91,7 @@ do
 		dim4=$(fslinfo $f | grep ^dim4 | awk '{ print $2 }')
 		te=$(fslhd $f | grep ^descrip |\
 		  awk '{ print $2 }' | awk -F';' '{ print $1 }'|\
-		  sed 's/TE=//')
+		  sed 's/TE=//' | sed 's/\.[0-9]*$//')
 		pe=$(fslhd $f | grep ^descrip |\
 		  awk '{ print $2 }' | awk -F';' '{ print $3 }'|\
 		  sed 's/phaseDir=//')
@@ -189,6 +189,31 @@ do
     
     	cd $modir/DICOM
 done
+
+##For Debugging (uncomment the following paragraph)
+##Ask if one would like to delete temporary files 
+#while true; do
+#    echo "Do you want to delete temporary files? (yes/no)"
+#    echo "For debugging, type no"
+#
+#    read answer
+#    case $answer in
+#        [Yy]*)
+#		#Delete remained nifti and bv{al,ec} files
+#		find $modir/DICOM -name '*.nii' -exec rm {} \;
+#		find $modir/DICOM -name '*.bval' -exec rm {} \;
+#		find $modir/DICOM -name '*.bvec' -exec rm {} \;
+#                break
+#                ;;
+#        [Nn]*)
+#                echo -e "Temporary files are not deleted.\n"
+#                break
+#                ;;
+#            *)
+#                echo -e "Type yes or no.\n"     
+#                ;;
+#       esac
+#done
 
 #Delete remained nifti and bv{al,ec} files
 find $modir/DICOM -name '*.nii' -exec rm {} \;

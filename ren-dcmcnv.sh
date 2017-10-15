@@ -270,7 +270,7 @@ if [ $debug != "d" ]; then
     find $modir/DICOM -name '*.bval' -exec rm {} \;
     find $modir/DICOM -name '*.bvec' -exec rm {} \;
 else
-    echo "Temporary files will not be generated"
+    echo "Temporary files will not be deleted"
     echo " "
 fi
 

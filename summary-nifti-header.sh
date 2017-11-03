@@ -1,9 +1,12 @@
 #!/bin/bash
 # script to summarize the header info of nifti files
+# TE can be found if dcm2nii or dcm2niix is used.
 # prerequisites: FSL
-# 18/Oct/2017 K. Nemoto
+# 03/Nov/2017 K. Nemoto
 
-echo "File,TE,dim1,dim2,dim3,dim4,pixdim1,pixdim2,pixdim3" > summary.csv
+timestamp=$(date +%Y%m%d%H%M)
+log=summary_$timestamp.csv
+echo "File,TE,dim1,dim2,dim3,dim4,pixdim1,pixdim2,pixdim3" > $log
 
 for f in *.nii*
 do
@@ -16,6 +19,6 @@ do
     pixdim2=`fslinfo $f | grep ^pixdim2 | awk '{ print $2 }'` 
     pixdim3=`fslinfo $f | grep ^pixdim3 | awk '{ print $2 }'` 
 
-    echo "$f,$te,$dim1,$dim2,$dim3,$dim4,$pixdim1,$pixdim2,$pixdim3" >> summary.csv
+    echo "$f,$te,$dim1,$dim2,$dim3,$dim4,$pixdim1,$pixdim2,$pixdim3" >> $log
 done
 

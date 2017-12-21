@@ -1,10 +1,10 @@
 #!/bin/bash
 # script to summarize the header info of nifti files
 # TE can be found if dcm2nii or dcm2niix is used.
-# prerequisites: FSL
+# prerequisites: dcm2nii and FSL
 # 03/Nov/2017 K. Nemoto
 
-timestamp=$(date +%Y%m%d%H%M)
+timestamp=$(date +%Y%m%d_%H%M)
 log=summary_$timestamp.csv
 echo "File,TE,dim1,dim2,dim3,dim4,pixdim1,pixdim2,pixdim3" > $log
 

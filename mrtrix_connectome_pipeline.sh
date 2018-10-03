@@ -38,10 +38,18 @@ if [ $# -ne 1 ]; then
     echo "V_001.nii D_001.nii"
     echo "V_002.nii D_002.nii"
     echo "V_003.nii D_003.nii"
+    echo "exit with an error"
     exit 1
 fi
 
-
+#Check if the list contains V_ and D_
+grep -E 'V_.*D_.*' $1 >/dev/null
+if [ $? -eq 1 ]; then
+    echo "$1 doesn't include pairs of V_*.nii and D_*.nii"
+    echo "Please prepare the coorect list"
+    echo "exit with an error"
+    exit 1
+fi
 
 #Process each individual using while loop
 cat $1 | sed '/^$/d' | while read line
@@ -108,7 +116,7 @@ do
     mrconvert aparc+aseg_T1.mgz aparc+aseg_T1.nii.gz
     
     
-    echo '(09/22) aparc+aseg.nii.gz converted to Diffusion space (aparc+aseg_D.nii.gz)'
+    echo '(09/22) aparc+aseg.nii.gz to Diffusion space (aparc+aseg_D.nii.gz)'
     flirt -in aparc+aseg_T1.nii.gz -ref b0_brain -init invBBR.mat \
           -out aparc+aseg_D -applyxfm -paddingsize 0.0 -interp nearestneighbour
     

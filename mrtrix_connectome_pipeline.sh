@@ -80,10 +80,15 @@ do
     cd $imgid
     
     echo "(01/22) recon-all of $data_v (aparc+aseg.mgz)"
-    recon-all -i $data_v -s $imgid -all
+
+    if [ ! -e $SUBJECTS_DIR/$imgid/mri/aparc+aseg.mgz ]; then
+        recon-all -i $data_v -s $imgid -all
+    else
+	echo "aparc+aseg.mgz is found. recon-all will be skipped."
+    fi
     cp $SUBJECTS_DIR/$imgid/mri/aparc+aseg.mgz $PWD
-    
-    
+   
+ 
     echo '(02/22) b0 extraction (b0.nii.gz)'
     fslroi ${data_d} b0 0 1
     

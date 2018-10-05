@@ -14,28 +14,15 @@
 #The script was originally written by Kenjiro Nakayama (Univ. of Tsukuba)
 #It was modified by Kiyotaka Nemoto
 
-#Ver.0.9.0: 5 Oct 2018
+#Ver.0.9.1: 5 Oct 2018
 
-##mrtrix3 PATH (Change with your settings)
+##mrtrix3 labelconvert PATH (Change with your settings)
 mrtrix3_label=$HOME/git/mrtrix3/share/mrtrix3/labelconvert
 
 log=mrtrix_connectome_$(date +%Y%m%d%H%M%S).log
 exec &> >(tee -a "$log")
 
 echo "** `date '+%Y-%m-%d %H:%M:%S'` - START"
-
-##Check if the argument is specified.
-#if [ $# -ne 1 ]; then
-#    echo "A list of files should be specified!"
-#    echo "Usage: $0 LIST"
-#    echo "LIST must include Volume and DTI nifti files of individuals"
-#    echo "example:"
-#    echo "V_001.nii D_001.nii"
-#    echo "V_002.nii D_002.nii"
-#    echo "V_003.nii D_003.nii"
-#    echo "exit with an error"
-#    exit 1
-#fi
 
 #Generate a list of pairs of volume and dti data
 ls V_*.nii* > tmp.vollist
@@ -69,15 +56,17 @@ while true; do
     esac
 done
 
-##Check if the list contains V_ and D_
-#grep -E 'V_.*D_.*' $1 >/dev/null
-#if [ $? -eq 1 ]; then
-#    echo "$1 doesn't include pairs of V_*.nii and D_*.nii"
-#    echo "Please prepare the coorect list"
-#    echo "exit with an error"
-#    exit 1
-#fi
 
+#Prepare originals and connectome directories
+if [ ! -e originals ]; then
+    mkdir originals
+fi
+    
+if [ ! -e connectome ]; then
+    mkdir connectome
+fi
+
+    
 #Process each individual using while loop
 cat tmp.list | sed '/^$/d' | while read line
 do
@@ -91,11 +80,7 @@ do
     data_a=aparc+aseg.mgz
     imgid=$(echo $data_v | sed -e 's/V_//' -e 's/.nii.*$//')
     
-    #Prepare original and subject directories
-    if [ ! -e originals ]; then
-        mkdir originals
-    fi
-    
+    #Prepare subject directories
     if [ ! -e $imgid ]; then
         mkdir $imgid
     fi
@@ -211,8 +196,13 @@ do
     echo "(22/22) connectome matrix generation (${imgid}_connectome.txt)"
     tck2connectome prob_sift.tck nodes_fixSGM.mif ${imgid}_connectome.txt
    
-
-    echo "connectome.txt for ${imgid} generated!"
+    if [ -e ${imgid}_connectome.txt ]; then
+        echo "connectome.txt for ${imgid} was successfully generated!"
+	echo "copy connectome.txt to connectome directory"
+	cp ${imgid}_connectome.txt connectome/
+    else
+	echo "Something went wrong... Check the log"
+    fi
  
     cd ${startdir}
 

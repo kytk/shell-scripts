@@ -67,7 +67,8 @@ while true; do
 		echo -e "Type yes or no \n"
 		;;
     esac
-		
+done
+
 ##Check if the list contains V_ and D_
 #grep -E 'V_.*D_.*' $1 >/dev/null
 #if [ $? -eq 1 ]; then

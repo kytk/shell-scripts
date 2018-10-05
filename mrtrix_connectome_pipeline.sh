@@ -1,14 +1,10 @@
 #!/bin/bash
+
 #mrtrix_connectome_pipeline.sh
+
 #A script to calculate structural connectome using FreeSurfer and mrtrix
 #Requirements: FSL, ROBEX, FreeSurfer, and MRtrix3
-#You need to prepare a list of pairs of Volume and DTI data
-#Example of lists
-# V_001.nii D_001.nii
-# V_002.nii D_002.nii
-# V_003.nii D_003.nii
-#
-#Usage: mrtrix_connectome_pipeline.sh LIST
+#You need to prepare pairs of Volume and DTI data in the directory
 
 #This script assumes that volume file should have V_ at the beginning of
 #the file while DTI files should have D_.
@@ -18,8 +14,7 @@
 #The script was originally written by Kenjiro Nakayama (Univ. of Tsukuba)
 #It was modified by Kiyotaka Nemoto
 
-#Ver.1.0: 3 Oct 2018
-
+#Ver.0.9.0: 5 Oct 2018
 
 ##mrtrix3 PATH (Change with your settings)
 mrtrix3_label=$HOME/git/mrtrix3/share/mrtrix3/labelconvert
@@ -29,30 +24,61 @@ exec &> >(tee -a "$log")
 
 echo "** `date '+%Y-%m-%d %H:%M:%S'` - START"
 
-#Check if the argument is specified.
-if [ $# -ne 1 ]; then
-    echo "A list of files should be specified!"
-    echo "Usage: $0 LIST"
-    echo "LIST must include Volume and DTI nifti files of individuals"
-    echo "example:"
-    echo "V_001.nii D_001.nii"
-    echo "V_002.nii D_002.nii"
-    echo "V_003.nii D_003.nii"
-    echo "exit with an error"
-    exit 1
-fi
+##Check if the argument is specified.
+#if [ $# -ne 1 ]; then
+#    echo "A list of files should be specified!"
+#    echo "Usage: $0 LIST"
+#    echo "LIST must include Volume and DTI nifti files of individuals"
+#    echo "example:"
+#    echo "V_001.nii D_001.nii"
+#    echo "V_002.nii D_002.nii"
+#    echo "V_003.nii D_003.nii"
+#    echo "exit with an error"
+#    exit 1
+#fi
 
-#Check if the list contains V_ and D_
-grep -E 'V_.*D_.*' $1 >/dev/null
-if [ $? -eq 1 ]; then
-    echo "$1 doesn't include pairs of V_*.nii and D_*.nii"
-    echo "Please prepare the coorect list"
-    echo "exit with an error"
-    exit 1
-fi
+#Generate a list of pairs of volume and dti data
+ls V_*.nii* > tmp.vollist
+ls D_*.nii* > tmp.dtilist
+paste tmp.vollist tmp.dtilist > tmp.list
+rm tmp.vollist tmp.dtilist
+
+echo "Volume and DTI nifti files are the followings;"
+echo "Pairs should be in the same line"
+
+cat tmp.list
+
+while true; do
+    echo "Is the list correct? (yes/no)"
+
+    read answer
+
+    case $answer in
+	[Yy]*)
+		echo -e "Continue processing \n"
+		break
+		;;
+	[Nn]*)
+		echo -e "Please put pairs of files in this directory \n"
+		echo -e "Please run this script later \n"
+		exit
+		;;
+	*)
+		echo -e "Type yes or no \n"
+		;;
+    esac
+		
+##Check if the list contains V_ and D_
+#grep -E 'V_.*D_.*' $1 >/dev/null
+#if [ $? -eq 1 ]; then
+#    echo "$1 doesn't include pairs of V_*.nii and D_*.nii"
+#    echo "Please prepare the coorect list"
+#    echo "exit with an error"
+#    exit 1
+#fi
 
 #Process each individual using while loop
-cat $1 | sed '/^$/d' | while read line
+cat tmp.list | sed '/^$/d' | while read line
 do
 
     #Define variables
@@ -190,6 +216,8 @@ do
     cd ${startdir}
 
 done
+
+rm tmp.list
 
 echo "** `date '+%Y-%m-%d %H:%M:%S'` - END"
 

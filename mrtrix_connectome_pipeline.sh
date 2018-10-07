@@ -199,7 +199,7 @@ do
     if [ -e ${imgid}_connectome.txt ]; then
         echo "connectome.txt for ${imgid} was successfully generated!"
 	echo "copy connectome.txt to connectome directory"
-	cp ${imgid}_connectome.txt connectome/
+	cp ${imgid}_connectome.txt ${startdir}/connectome/
     else
 	echo "Something went wrong... Check the log"
     fi

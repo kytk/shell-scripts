@@ -14,7 +14,7 @@
 #The script was originally written by Kenjiro Nakayama (Univ. of Tsukuba)
 #It was modified by Kiyotaka Nemoto
 
-#Ver.0.9.1: 5 Oct 2018
+#Ver.0.9.2: 02 Mar 2019
 
 ##mrtrix3 labelconvert PATH (Change with your settings)
 mrtrix3_label=$HOME/git/mrtrix3/share/mrtrix3/labelconvert
@@ -57,7 +57,7 @@ while true; do
 done
 
 
-#Prepare originals and connectome directories
+#Prepare originals, connectome, and subjects directories
 if [ ! -e originals ]; then
     mkdir originals
 fi
@@ -66,6 +66,12 @@ if [ ! -e connectome ]; then
     mkdir connectome
 fi
 
+if [ ! -e subjects ]; then
+    mkdir subjects
+fi
+
+#Set subjects directory as $SUBJECTS_DIR
+export SUBJECTS_DIR=$PWD/subjects
     
 #Process each individual using while loop
 cat tmp.list | sed '/^$/d' | while read line

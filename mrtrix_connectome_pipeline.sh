@@ -58,17 +58,9 @@ done
 
 
 #Prepare originals, connectome, and subjects directories
-if [ ! -e originals ]; then
-    mkdir originals
-fi
-    
-if [ ! -e connectome ]; then
-    mkdir connectome
-fi
-
-if [ ! -e subjects ]; then
-    mkdir subjects
-fi
+[ ! -e originals ] && mkdir originals
+[ ! -e connectome ] && mkdir connectome
+[ ! -e subjects ] && mkdir subjects
 
 #Set subjects directory as $SUBJECTS_DIR
 export SUBJECTS_DIR=$PWD/subjects
@@ -87,9 +79,7 @@ do
     imgid=$(echo $data_v | sed -e 's/V_//' -e 's/.nii.*$//')
     
     #Prepare subject directories
-    if [ ! -e $imgid ]; then
-        mkdir $imgid
-    fi
+    [ ! -e $imgid ] && mkdir $imgid
     
     #Copy files to originals and move files to each directory
     cp $data_v $data_d $data_bvec $data_bval originals/

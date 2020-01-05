@@ -3,7 +3,7 @@
 #mrtrix_connectome_pipeline.sh
 
 #A script to calculate structural connectome using FreeSurfer and mrtrix
-#Requirements: FSL, ROBEX, FreeSurfer, and MRtrix3
+#Requirements: FSL, FreeSurfer, and MRtrix3
 #You need to prepare pairs of Volume and DTI data in the directory
 
 #This script assumes that volume file should have V_ at the beginning of
@@ -106,9 +106,9 @@ do
     
     
     echo '(04/22) T1WI brain extraction (T1WI_brain.nii.gz)'
-    #bet ${data_v} T1WI_brain.nii.gz -B -f 0.2 -g 0.23
-    runROBEX.sh ${data_v} T1WI_brain.nii.gz
-    fslcpgeom ${data_v} T1WI_brain.nii.gz
+    bet ${data_v} T1WI_brain.nii.gz -B -f 0.2 -g 0.2
+    #runROBEX.sh ${data_v} T1WI_brain.nii.gz
+    #fslcpgeom ${data_v} T1WI_brain.nii.gz
     
     
     echo '(05/22) matrix to convert dSPACE to T1WISPACE (BBR.mat)'

@@ -135,7 +135,7 @@ temp=$(grep '0020,0105' dcmtmp | cut -c 16-)
 volumes=${temp}
 echo "Volumes:		${volumes}" >> "$summary"
 
-#rm dcmtmp
+rm dcmtmp
 
 exit
 

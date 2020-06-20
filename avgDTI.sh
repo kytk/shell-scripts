@@ -25,7 +25,7 @@ do
   do
     first=${base}_$(printf '%03d\n' $i)
     second=${base}_$(printf '%03d\n' $(($i + 65)))
-    fslmaths $first -add $second dti_$(printf '%02d\n' $i)
+    fslmaths $first -add $second -div 2 dti_$(printf '%02d\n' $i)
   done
 
   echo "convert 3D images to 4D image"

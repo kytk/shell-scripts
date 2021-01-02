@@ -59,7 +59,7 @@ fi
 
 mkdir -p ANTS/{build,install}
 cd ANTS
-echo "Compiled on $(date +%Y-$m-%d)" > README
+echo "Compiled on $(date +%Y-%m-%d)" > README
 workingDir=${PWD}
 
 # Compile and install ANTs

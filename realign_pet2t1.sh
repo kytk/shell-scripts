@@ -18,28 +18,38 @@ t1=$(imglob $1)
 pet=$(imglob $2)
 ref=${FSLDIR}/data/standard/MNI152_T1_1mm
 
+echo "T1 is $t1 and PET is $pet"
+
 # Reorient T1
+echo "Reorient T1"
 fslreorient2std $t1 ${t1}_o
 
 # Rigid body transform of T1 to MNI
+echo "Rigid body transform of T1 to MNI"
 flirt -dof 6 -in ${t1}_o -ref ${ref} -out ${t1}_r
 
 # Calculate mean image of PET
+echo "Calculate mean image of PET"
 fslmaths ${pet} -Tmean ${pet}_m
 
 # Realign mean PET to realigned T1
+echo "Realign mean PET to realigned T1"
 flirt -in ${pet}_m -ref ${t1}_r -out ${pet}_mr
 
 # Split PET frames
+echo "Split PET frames"
 fslsplit ${pet}
 
 # Realign each PET frame to realigned_mean_PET
+echo "Realign each PET frame to realigned_mean_PET"
 for f in vol*; do flirt -in $f -ref ${pet}_mr -out ${f%.nii.gz}_r; done
 
 # Merge realigned frames
+echo "Merge realigned frames"
 fslmerge -t ${pet}_r vol000?_r.nii.gz
 
 # Calculate mean of realigned PET images
+echo "Calculate mean of realigned PET images"
 fslmaths ${pet}_r -Tmean ${pet}_mean
 
 # Delete temporary files

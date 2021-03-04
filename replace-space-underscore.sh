@@ -10,7 +10,7 @@ while true; do
 
     case $answer in
         [Yy]*)
-            for i in $(seq $(find . -type d | wc -l))
+	    for i in $(seq $(find . -type d | awk -F/ '{ print NF }' | sort | tail -1))
             do
                 find . -maxdepth $i -name '* *' | \
                 while read line

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # A script to compile ANTs for macOS
 # K. Nemoto 4 Jan 2022
 
@@ -78,17 +78,17 @@ make install 2>&1 | tee install.log
 
 # PATH setting
 your_shell=$(echo $SHELL)
-if  [ ${your_shell} == '/bin/bash' ]; then
-  profile='~/.bash_profile'
-elif  [ ${your_shell} == '/bin/zsh' ]; then
-  profile='~/.zprofile'
+if  [ ${your_shell} = '/bin/bash' ]; then
+  profile="$HOME/.bash_profile"
+elif  [ ${your_shell} = '/bin/zsh' ]; then
+  profile="$HOME/.zprofile"
 fi
 
 grep '$HOME/ANTS/install/bin' ${profile} > /dev/null
 if [ $? -eq 1 ]; then
   echo "" >> ${profile}
   echo "#ANTs" >> ${profile}
-  echo 'export ANTSPATH=$HOME/ANTS/install/bin' >> ${profile} 
+  echo 'export ANTSPATH=$HOME/ANTS/install/bin' >> ${profile}
   echo 'export PATH=$PATH:$ANTSPATH' >> ${profile}
 fi
 

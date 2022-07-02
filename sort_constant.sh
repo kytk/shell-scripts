@@ -7,7 +7,7 @@
 
 # 17 Oct 2021 K. Nemoto
 
-set -x
+#set -x
 
 #Check if the files are specified
 if [ $# -lt 2 ]

@@ -22,6 +22,10 @@ temp=$(grep '0008,0080' dcmtmp | cut -c 16-)
 institution=${temp}
 echo "施設名:			${institution}" >> "$summary"
 
+temp=$(grep '0008,1030' dcmtmp | cut -c 16-)
+series_descrip=${temp}
+echo "Series_Description:	${series_descrip}" >> "$summary"
+
 temp=$(grep '0020,0011' dcmtmp | cut -c 16-)
 seq_no=${temp}
 echo "シークエンス番号:	${seq_no}" >> "$summary"
@@ -135,7 +139,7 @@ temp=$(grep '0020,0105' dcmtmp | cut -c 16-)
 volumes=${temp}
 echo "Volumes:		${volumes}" >> "$summary"
 
-rm dcmtmp
+#rm dcmtmp
 
 exit
 

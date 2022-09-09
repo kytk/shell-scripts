@@ -1,7 +1,7 @@
 #!/bin/bash
 # genroi.sh
 # generate rois from atlas
-# Usage: genroi.sh <atlas>
+# Usage: genroi.sh <atlas> <output_base>
 # Prerequisite: fsl
 # K.Nemoto 05 Jan 2020 
 

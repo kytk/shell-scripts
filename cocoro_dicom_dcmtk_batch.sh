@@ -5,13 +5,19 @@ timestamp=$(date +%Y%m%d)
 timestamp2=$(date +%Y%m%d%H%M)
 
 modir=$PWD
+id=$(basename $modir)
+
+if [ ! -e $modir/../summary ]; then
+  mkdir $modir/../summary
+fi
+
 for dir in $(ls -F | grep / | sed 's@/@@')
 
 do
 
   cd $dir
 
-  summary=${modir}/summary_${dir}_${timestamp2}.txt
+  summary=${modir}/../summary/${dir}_${id}_summary_${timestamp}.csv
   
   if [ ! -e dcmtmp ]; then
     dcmdump $(file $(find | head) | grep DICOM | sed -n 1p | sed -e 's/://' | awk '{ print $1 }') | \
@@ -20,6 +26,8 @@ do
   fi
   
   echo "確認日:			${timestamp}" > "$summary"
+
+  echo "ID:			${id}" >> "$summary"
   
   temp=$(grep '0008,0020' dcmtmp | cut -c 16-)
   acqdate=${temp}
@@ -47,7 +55,7 @@ do
   
   temp=$(grep '0018,1250' dcmtmp | cut -c 16-)
   #head_coil=${temp}
-  echo "Head_Coil:		N/A" >> "$summary"
+  #echo "Head_Coil:		N/A" >> "$summary"
   
   temp=$(grep '0008,1030' dcmtmp | cut -c 16-)
   study_descrip=${temp}
@@ -62,7 +70,7 @@ do
   echo "pulse_sequence:		${pulse_sequence}" >> "$summary"
   
   #N/A	       	Acceleration mode
-  echo "Acceleration_mode:	N/A" >> "$summary"
+  #echo "Acceleration_mode:	N/A" >> "$summary"
   
   temp=$(grep '0018,0080' dcmtmp | cut -c 16-)
   tr=${temp}
@@ -84,11 +92,11 @@ do
   matrix=${temp}
   echo "Matrix:			${matrix}" >> "$summary"
   
-  temp=$(grep '0028,0010' dcmtmp | cut -c 16-)
+  temp=$(grep '0028,0010' dcmtmp | head -n 1 | cut -c 16-)
   row=${temp}
   echo "Row:			${row}" >> "$summary"
   
-  temp=$(grep '0028,0011' dcmtmp | cut -c 16-)
+  temp=$(grep '0028,0011' dcmtmp | head -n 1 | cut -c 16-19)
   column=${temp}
   echo "Column:			${column}" >> "$summary"
   
@@ -110,14 +118,14 @@ do
   
   #temp=$(grep '0020,0037' dcmtmp | cut -c 16-)
   #slice_orientation=${temp}
-  echo "Slice_orientation:	N/A" >> "$summary"
-  #
+  #echo "Slice_orientation:	N/A" >> "$summary"
+  
   temp=$(grep '0018,1312' dcmtmp | cut -c 16-)
   slice_encoding=${temp}
   echo "Slice_encoding_dir:	${slice_encoding}" >> "$summary"
   
   #N/A	       	slice order
-  echo "Slice_order:		N/A" >> "$summary"
+  #echo "Slice_order:		N/A" >> "$summary"
   
   temp=$(grep '0018,0088' dcmtmp | cut -c 16-)
   interslice_spacing=${temp}
@@ -132,19 +140,19 @@ do
   echo "Number_of_echoes:	${number_echo}" >> "$summary"
   
   #N/A	       	shim mode
-  echo "Shim_mode:		N/A" >> "$summary"
+  #echo "Shim_mode:		N/A" >> "$summary"
   
-  temp=$(grep '0019,10a4' dcmtmp | cut -c 16-)
-  suppression=${temp}
-  echo "FatWater_suppression:	${suppression}" >> "$summary"
+  #temp=$(grep '0019,10a4' dcmtmp | cut -c 16-)
+  #suppression=${temp}
+  #echo "FatWater_suppression:	${suppression}" >> "$summary"
   
   temp=$(grep '0018,0095' dcmtmp | cut -c 16-)
   pixel_bandwidth=${temp}
   echo "Pixel_bandwidth:	${pixel_bandwidth}" >> "$summary"
   
-  temp=$(grep '0020,0105' dcmtmp | cut -c 16-)
-  volumes=${temp}
-  echo "Volumes:		${volumes}" >> "$summary"
+  #temp=$(grep '0020,0105' dcmtmp | cut -c 16-)
+  #volumes=${temp}
+  #echo "Volumes:		${volumes}" >> "$summary"
   
   rm dcmtmp
 
